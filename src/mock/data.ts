@@ -1,14 +1,56 @@
 import { subDays, format, subHours, subMinutes } from 'date-fns'
 import type { User } from '@/types/user'
+import type { Profile } from '@/types/profile'
 import type { Organization } from '@/types/organization'
 import type { Schedule } from '@/types/schedule'
 import type { Visit } from '@/types/visit'
 import type { Transaction } from '@/types/transaction'
 import type { Notification } from '@/types/notification'
 import type { Category } from '@/types/category'
+import type { History } from '@/types/history'
+import type { Log } from '@/types/log'
+import type { Otp } from '@/types/otp'
 import type { PaginatedResponse } from '@/types/api'
 import type { DashboardStats, AppointmentDataPoint, PaymentStatusData } from '@/api/dashboard'
 import type { LoginResponse, VerifyOtpResponse } from '@/api/auth'
+
+// ─── Mock credential quick-fill ───────────────────────────────────────────────
+
+export interface MockCredential {
+  id: string
+  label: string
+  role: string
+  email: string
+  password: string
+  phone: string
+}
+
+export const MOCK_CREDENTIALS: MockCredential[] = [
+  { id: 'usr_000', label: 'Super Admin', role: 'super_admin', email: 'superadmin@medapp.io', password: 'password123', phone: '+1 555-0100' },
+  { id: 'usr_001', label: 'Admin', role: 'admin', email: 'admin@medapp.io', password: 'password123', phone: '+1 555-0101' },
+  { id: 'usr_002', label: 'Dr. Sarah Chen', role: 'doctor', email: 'dr.sarah.chen@medapp.io', password: 'password123', phone: '+1 555-0102' },
+  { id: 'usr_004', label: 'Emily Watson', role: 'staff', email: 'nurse.emily@medapp.io', password: 'password123', phone: '+1 555-0104' },
+  { id: 'usr_006', label: 'John Doe', role: 'patient', email: 'john.doe@example.com', password: 'password123', phone: '+1 555-0106' },
+]
+
+let _mockSelectedUserId = 'usr_000'
+
+export function setMockSelectedUserId(id: string): void {
+  _mockSelectedUserId = id
+}
+
+export function getMockLoginResponse(): LoginResponse {
+  return { requiresOtp: true, userId: _mockSelectedUserId }
+}
+
+export function getMockVerifyOtpResponse(): VerifyOtpResponse {
+  const cred = MOCK_CREDENTIALS.find((c) => c.id === _mockSelectedUserId) ?? MOCK_CREDENTIALS[0]
+  return {
+    token: `mock_jwt_token_${cred.role}`,
+    userId: cred.id,
+    role: cred.role,
+  }
+}
 
 // ─── Auth ────────────────────────────────────────────────────────────────────
 
@@ -66,6 +108,7 @@ export const mockPaymentStatus: PaymentStatusData[] = [
 // ─── Users ───────────────────────────────────────────────────────────────────
 
 export const mockUsers: User[] = [
+  { id: 'usr_000', email: 'superadmin@medapp.io', phone: '+1 555-0100', role: 'super_admin', isActive: true, isVerified: true, createdAt: subDays(new Date(), 730).toISOString(), updatedAt: new Date().toISOString() },
   { id: 'usr_001', email: 'admin@medapp.io', phone: '+1 555-0101', role: 'admin', isActive: true, isVerified: true, createdAt: subDays(new Date(), 365).toISOString(), updatedAt: new Date().toISOString() },
   { id: 'usr_002', email: 'dr.sarah.chen@medapp.io', phone: '+1 555-0102', role: 'doctor', isActive: true, isVerified: true, createdAt: subDays(new Date(), 300).toISOString(), updatedAt: new Date().toISOString() },
   { id: 'usr_003', email: 'dr.james.miller@medapp.io', phone: '+1 555-0103', role: 'doctor', isActive: true, isVerified: true, createdAt: subDays(new Date(), 280).toISOString(), updatedAt: new Date().toISOString() },
@@ -212,3 +255,43 @@ export const mockCategoriesPaginated: PaginatedResponse<Category> = {
   limit: 20,
   totalPages: 1,
 }
+
+// ─── Profiles ─────────────────────────────────────────────────────────────────
+
+export const mockProfiles: Profile[] = [
+  { id: 'prf_001', userId: 'usr_001', firstName: 'Ahmed', lastName: 'Ali', gender: 'male', city: 'Cairo', country: 'Egypt', createdAt: subDays(new Date(), 365).toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'prf_002', userId: 'usr_002', firstName: 'Sarah', lastName: 'Chen', dateOfBirth: '1985-04-12', gender: 'female', city: 'New York', country: 'US', createdAt: subDays(new Date(), 300).toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'prf_003', userId: 'usr_003', firstName: 'James', lastName: 'Miller', dateOfBirth: '1979-09-23', gender: 'male', city: 'Boston', country: 'US', createdAt: subDays(new Date(), 280).toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'prf_004', userId: 'usr_004', firstName: 'Emily', lastName: 'Watson', dateOfBirth: '1991-02-17', gender: 'female', city: 'Chicago', country: 'US', createdAt: subDays(new Date(), 250).toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'prf_005', userId: 'usr_006', firstName: 'John', lastName: 'Doe', dateOfBirth: '1990-07-04', gender: 'male', city: 'Los Angeles', country: 'US', createdAt: subDays(new Date(), 180).toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'prf_006', userId: 'usr_007', firstName: 'Jane', lastName: 'Smith', dateOfBirth: '1988-11-30', gender: 'female', city: 'Houston', country: 'US', createdAt: subDays(new Date(), 160).toISOString(), updatedAt: new Date().toISOString() },
+]
+
+// ─── Histories ────────────────────────────────────────────────────────────────
+
+export const mockHistories: History[] = [
+  { id: 'hist_001', userId: 'usr_006', organizationId: 'org_001', createdAt: subDays(new Date(), 60).toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'hist_002', userId: 'usr_006', organizationId: 'org_002', createdAt: subDays(new Date(), 30).toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'hist_003', userId: 'usr_007', organizationId: 'org_001', createdAt: subDays(new Date(), 45).toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'hist_004', userId: 'usr_008', organizationId: 'org_002', createdAt: subDays(new Date(), 20).toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'hist_005', userId: 'usr_010', organizationId: 'org_003', createdAt: subDays(new Date(), 15).toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'hist_006', userId: 'usr_011', organizationId: 'org_004', createdAt: subDays(new Date(), 10).toISOString(), updatedAt: new Date().toISOString() },
+]
+
+// ─── Logs ─────────────────────────────────────────────────────────────────────
+
+export const mockLogs: Log[] = [
+  { id: 'log_001', createdAt: subMinutes(new Date(), 5).toISOString() },
+  { id: 'log_002', createdAt: subMinutes(new Date(), 15).toISOString() },
+  { id: 'log_003', createdAt: subHours(new Date(), 1).toISOString() },
+  { id: 'log_004', createdAt: subHours(new Date(), 3).toISOString() },
+  { id: 'log_005', createdAt: subDays(new Date(), 1).toISOString() },
+]
+
+// ─── OTPs ─────────────────────────────────────────────────────────────────────
+
+export const mockOtps: Otp[] = [
+  { id: 'otp_001', userId: 'usr_006', otp: '123456', type: 'EMAIL', expiresAt: subMinutes(new Date(), -30).toISOString(), createdAt: new Date().toISOString() },
+  { id: 'otp_002', userId: 'usr_007', otp: '654321', type: 'SMS', expiresAt: subMinutes(new Date(), -15).toISOString(), createdAt: new Date().toISOString() },
+  { id: 'otp_003', userId: 'usr_010', otp: '987654', type: 'EMAIL', expiresAt: subMinutes(new Date(), 10).toISOString(), createdAt: subMinutes(new Date(), 5).toISOString() },
+]

@@ -23,6 +23,7 @@ export async function getUser(id: string): Promise<User> {
   return data
 }
 
+// Super-admin only
 export async function createUser(payload: CreateUserPayload): Promise<User> {
   if (MOCK_ENABLED) {
     void payload
@@ -32,15 +33,17 @@ export async function createUser(payload: CreateUserPayload): Promise<User> {
   return data
 }
 
+// Super-admin only
 export async function updateUser(id: string, payload: UpdateUserPayload): Promise<User> {
   if (MOCK_ENABLED) {
     const user = mockUsers.find((u) => u.id === id) ?? mockUsers[0]
     return mockDelay({ ...user, ...payload })
   }
-  const { data } = await api.patch(`/users/${id}`, payload)
+  const { data } = await api.put(`/users/${id}`, payload)
   return data
 }
 
+// Super-admin only
 export async function deleteUser(id: string): Promise<void> {
   if (MOCK_ENABLED) {
     void id

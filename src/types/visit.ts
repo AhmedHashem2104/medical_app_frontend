@@ -22,3 +22,11 @@ export interface Visit {
   createdAt: string
   updatedAt: string
 }
+
+export interface CreateVisitPayload {
+  schedule_id: string
+}
+
+export interface UpdateVisitPayload {
+  schedule_id?: string
+}

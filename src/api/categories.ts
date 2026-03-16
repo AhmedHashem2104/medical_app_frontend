@@ -23,6 +23,7 @@ export async function getCategory(id: string): Promise<Category> {
   return data
 }
 
+// Super-admin only
 export async function createCategory(payload: CreateCategoryPayload): Promise<Category> {
   if (MOCK_ENABLED) {
     void payload
@@ -33,15 +34,17 @@ export async function createCategory(payload: CreateCategoryPayload): Promise<Ca
   return data
 }
 
+// Super-admin only
 export async function updateCategory(id: string, payload: UpdateCategoryPayload): Promise<Category> {
   if (MOCK_ENABLED) {
     const cat = mockCategories.find((c) => c.id === id) ?? mockCategories[0]
     return mockDelay({ ...cat, ...payload })
   }
-  const { data } = await api.patch(`/categories/${id}`, payload)
+  const { data } = await api.put(`/categories/${id}`, payload)
   return data
 }
 
+// Super-admin only
 export async function deleteCategory(id: string): Promise<void> {
   if (MOCK_ENABLED) {
     void id

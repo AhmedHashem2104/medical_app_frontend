@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { getUsers, getUser, updateUser, deleteUser } from '@/api/users'
+import { getUsers, getUser, createUser, updateUser, deleteUser } from '@/api/users'
 import { queryKeys } from '@/router/query-keys'
 import type { ListParams } from '@/types/api'
-import type { UpdateUserPayload } from '@/types/user'
+import type { CreateUserPayload, UpdateUserPayload } from '@/types/user'
 
 export function useUsers(params: ListParams) {
   return useQuery({
@@ -19,6 +19,18 @@ export function useUser(id: string) {
     queryKey: queryKeys.users.detail(id),
     queryFn: () => getUser(id),
     enabled: !!id,
+  })
+}
+
+export function useCreateUser() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (payload: CreateUserPayload) => createUser(payload),
+    onSuccess: () => {
+      toast.success('User created.')
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.all })
+    },
+    onError: () => toast.error('Failed to create user.'),
   })
 }
 

@@ -20,3 +20,17 @@ export interface Transaction {
   createdAt: string
   updatedAt: string
 }
+
+export interface CreateTransactionPayload {
+  amount: string
+  user_id: string
+  organization_id: string
+  payment_status?: PaymentStatus
+}
+
+export interface UpdateTransactionPayload {
+  amount?: string
+  user_id?: string
+  organization_id?: string
+  payment_status?: PaymentStatus
+}

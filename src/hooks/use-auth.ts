@@ -14,7 +14,7 @@ export function useLogin() {
       if (data.requiresOtp && data.userId) {
         navigate('/verify-otp', { state: { userId: data.userId, email: variables.email } })
       } else if (data.token && data.userId && data.role) {
-        useAuthStore.getState().setAuth(data.token, data.userId, data.role as 'admin' | 'doctor' | 'staff')
+        useAuthStore.getState().setAuth(data.token, data.userId, data.role as 'super_admin' | 'admin' | 'doctor' | 'staff')
         navigate('/dashboard')
       }
     },
@@ -33,7 +33,7 @@ export function usePhoneLogin() {
       if (data.requiresOtp && data.userId) {
         navigate('/verify-otp', { state: { userId: data.userId, phone: variables.phone } })
       } else if (data.token && data.userId && data.role) {
-        useAuthStore.getState().setAuth(data.token, data.userId, data.role as 'admin' | 'doctor' | 'staff')
+        useAuthStore.getState().setAuth(data.token, data.userId, data.role as 'super_admin' | 'admin' | 'doctor' | 'staff')
         navigate('/dashboard')
       }
     },
@@ -50,7 +50,7 @@ export function useVerifyOtp() {
   return useMutation({
     mutationFn: (payload: VerifyOtpPayload) => verifyOtp(payload),
     onSuccess: (data) => {
-      setAuth(data.token, data.userId, data.role as 'admin' | 'doctor' | 'staff')
+      setAuth(data.token, data.userId, data.role as 'super_admin' | 'admin' | 'doctor' | 'staff')
       navigate('/dashboard')
     },
     onError: () => {
