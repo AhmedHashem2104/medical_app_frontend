@@ -22,3 +22,23 @@ export interface Profile {
   createdAt: string
   updatedAt: string
 }
+
+export interface CreateProfilePayload {
+  user_id: string
+  socials?: Record<string, string>
+  national_id?: string
+  birth_date?: string
+  img?: string
+  gender?: Gender
+  extra?: Record<string, unknown>
+}
+
+export interface UpdateProfilePayload {
+  user_id?: string
+  socials?: Record<string, string>
+  national_id?: string
+  birth_date?: string
+  img?: string
+  gender?: Gender
+  extra?: Record<string, unknown>
+}

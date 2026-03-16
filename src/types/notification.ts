@@ -16,3 +16,11 @@ export interface Notification {
   isRead: boolean
   createdAt: string
 }
+
+export interface CreateNotificationPayload {
+  [key: string]: unknown
+}
+
+export interface UpdateNotificationPayload {
+  [key: string]: unknown
+}

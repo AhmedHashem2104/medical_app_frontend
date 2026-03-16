@@ -4,7 +4,7 @@ export interface User {
   id: string
   email: string
   phone?: string
-  role: 'admin' | 'doctor' | 'staff' | 'patient'
+  role: 'super_admin' | 'admin' | 'doctor' | 'staff' | 'patient'
   isActive: boolean
   isVerified: boolean
   createdAt: string
@@ -16,7 +16,7 @@ export interface CreateUserPayload {
   email: string
   phone?: string
   password: string
-  role: User['role']
+  role?: User['role']
 }
 
 export interface UpdateUserPayload {

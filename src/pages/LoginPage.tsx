@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Stethoscope, Lock, Mail, ArrowRight, Shield, Users, Activity, Phone } from 'lucide-react'
+import { Stethoscope, Lock, Mail, ArrowRight, Shield, Users, Activity, Phone, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -10,6 +10,7 @@ import { useLogin, usePhoneLogin } from '@/hooks/use-auth'
 import { APP_NAME, MOCK_ENABLED } from '@/constants'
 import { useDocumentTitle } from '@/hooks/use-document-title'
 import { cn } from '@/lib/utils'
+import { MOCK_CREDENTIALS, setMockSelectedUserId } from '@/mock/data'
 
 const emailSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -31,6 +32,60 @@ const BRAND_FEATURES = [
   { icon: Users, text: 'Multi-site organization management' },
   { icon: Activity, text: 'Real-time visit & billing tracking' },
 ]
+
+const ROLE_BADGE: Record<string, string> = {
+  super_admin: 'bg-violet-500/15 text-violet-600 dark:text-violet-400',
+  admin: 'bg-blue-500/15 text-blue-600 dark:text-blue-400',
+  doctor: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
+  staff: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
+  patient: 'bg-slate-500/15 text-slate-600 dark:text-slate-400',
+}
+
+function MockCredentialBar({ onSelect }: { onSelect: (id: string) => void }) {
+  return (
+    <div className="mb-5 rounded-lg border border-warning/30 bg-warning/8 p-3 space-y-2">
+      <p className="text-xs font-semibold text-warning">Mock mode</p>
+      <div className="relative">
+        <select
+          defaultValue=""
+          onChange={(e) => {
+            if (e.target.value) {
+              setMockSelectedUserId(e.target.value)
+              onSelect(e.target.value)
+            }
+          }}
+          className="w-full appearance-none rounded-md border border-border bg-background px-3 py-2 pr-8 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 cursor-pointer"
+        >
+          <option value="" disabled>Quick fill — select a mock user…</option>
+          {MOCK_CREDENTIALS.map((cred) => (
+            <option key={cred.id} value={cred.id}>
+              {cred.label} · {cred.role.replace('_', ' ')} · {cred.email}
+            </option>
+          ))}
+        </select>
+        <ChevronDown size={13} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+      </div>
+      <div className="flex flex-wrap gap-1.5">
+        {MOCK_CREDENTIALS.map((cred) => (
+          <button
+            key={cred.id}
+            type="button"
+            onClick={() => {
+              setMockSelectedUserId(cred.id)
+              onSelect(cred.id)
+            }}
+            className={cn(
+              'rounded-full px-2 py-0.5 text-[10px] font-medium transition-opacity hover:opacity-80',
+              ROLE_BADGE[cred.role] ?? ROLE_BADGE.patient
+            )}
+          >
+            {cred.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 function BrandingPanel() {
   return (
@@ -103,13 +158,25 @@ function BrandingPanel() {
 function EmailForm() {
   const loginMutation = useLogin()
 
-  const { register, handleSubmit, formState: { errors } } = useForm<EmailFormData>({
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<EmailFormData>({
     resolver: zodResolver(emailSchema),
-    defaultValues: MOCK_ENABLED ? { email: 'admin@medapp.io', password: 'password123' } : undefined,
+    defaultValues: MOCK_ENABLED
+      ? { email: MOCK_CREDENTIALS[0].email, password: MOCK_CREDENTIALS[0].password }
+      : undefined,
   })
+
+  function handleMockSelect(id: string) {
+    const cred = MOCK_CREDENTIALS.find((c) => c.id === id)
+    if (cred) {
+      setValue('email', cred.email, { shouldValidate: true })
+      setValue('password', cred.password, { shouldValidate: true })
+    }
+  }
 
   return (
     <form onSubmit={handleSubmit((d) => loginMutation.mutate(d))} className="space-y-5">
+      {MOCK_ENABLED && <MockCredentialBar onSelect={handleMockSelect} />}
+
       <div className="space-y-1.5">
         <Label htmlFor="email" className="text-sm font-medium">Email address</Label>
         <div className="relative">
@@ -138,13 +205,24 @@ function EmailForm() {
 function PhoneForm() {
   const phoneLoginMutation = usePhoneLogin()
 
-  const { register, handleSubmit, formState: { errors } } = useForm<PhoneFormData>({
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<PhoneFormData>({
     resolver: zodResolver(phoneSchema),
-    defaultValues: MOCK_ENABLED ? { phone: '+1 555 000 0001' } : undefined,
+    defaultValues: MOCK_ENABLED
+      ? { phone: MOCK_CREDENTIALS[0].phone }
+      : undefined,
   })
+
+  function handleMockSelect(id: string) {
+    const cred = MOCK_CREDENTIALS.find((c) => c.id === id)
+    if (cred) {
+      setValue('phone', cred.phone, { shouldValidate: true })
+    }
+  }
 
   return (
     <form onSubmit={handleSubmit((d) => phoneLoginMutation.mutate(d))} className="space-y-5">
+      {MOCK_ENABLED && <MockCredentialBar onSelect={handleMockSelect} />}
+
       <div className="space-y-1.5">
         <Label htmlFor="phone" className="text-sm font-medium">Phone number</Label>
         <div className="relative">
@@ -192,11 +270,6 @@ export default function LoginPage() {
             <p className="mt-1.5 text-sm text-muted-foreground">
               Sign in to access the dashboard
             </p>
-            {MOCK_ENABLED && (
-              <div className="mt-3 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2.5">
-                <p className="text-xs font-medium text-warning">Mock mode — credentials are pre-filled</p>
-              </div>
-            )}
           </div>
 
           {/* Method tabs */}

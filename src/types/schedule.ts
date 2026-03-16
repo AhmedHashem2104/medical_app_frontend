@@ -10,3 +10,13 @@ export interface Schedule {
   createdAt: string
   updatedAt: string
 }
+
+export interface CreateSchedulePayload {
+  user_id: string
+  organization_id: string
+}
+
+export interface UpdateSchedulePayload {
+  user_id?: string
+  organization_id?: string
+}
