@@ -1,18 +1,18 @@
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import { login, verifyOtp, resendOtp, logout } from '@/api/auth'
+import { login, phoneLogin, verifyOtp, resendOtp, logout } from '@/api/auth'
 import { useAuthStore } from '@/store/auth-store'
-import type { LoginPayload, VerifyOtpPayload } from '@/api/auth'
+import type { LoginPayload, PhoneLoginPayload, VerifyOtpPayload } from '@/api/auth'
 
 export function useLogin() {
   const navigate = useNavigate()
 
   return useMutation({
     mutationFn: (payload: LoginPayload) => login(payload),
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       if (data.requiresOtp && data.userId) {
-        navigate('/verify-otp', { state: { userId: data.userId } })
+        navigate('/verify-otp', { state: { userId: data.userId, email: variables.email } })
       } else if (data.token && data.userId && data.role) {
         useAuthStore.getState().setAuth(data.token, data.userId, data.role as 'admin' | 'doctor' | 'staff')
         navigate('/dashboard')
@@ -20,6 +20,25 @@ export function useLogin() {
     },
     onError: () => {
       toast.error('Login failed. Please check your credentials.')
+    },
+  })
+}
+
+export function usePhoneLogin() {
+  const navigate = useNavigate()
+
+  return useMutation({
+    mutationFn: (payload: PhoneLoginPayload) => phoneLogin(payload),
+    onSuccess: (data, variables) => {
+      if (data.requiresOtp && data.userId) {
+        navigate('/verify-otp', { state: { userId: data.userId, phone: variables.phone } })
+      } else if (data.token && data.userId && data.role) {
+        useAuthStore.getState().setAuth(data.token, data.userId, data.role as 'admin' | 'doctor' | 'staff')
+        navigate('/dashboard')
+      }
+    },
+    onError: () => {
+      toast.error('Phone login failed. Please check your number and try again.')
     },
   })
 }

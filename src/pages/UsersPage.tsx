@@ -8,6 +8,7 @@ import { DataTable } from '@/components/common/DataTable'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useUsers } from '@/hooks/use-users'
+import { useDocumentTitle } from '@/hooks/use-document-title'
 import type { User } from '@/types/user'
 
 const columns: ColumnDef<User>[] = [
@@ -38,6 +39,7 @@ const columns: ColumnDef<User>[] = [
 ]
 
 export default function UsersPage() {
+  useDocumentTitle('Users')
   const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')

@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { useDocumentTitle } from '@/hooks/use-document-title'
 
 export default function NotFoundPage() {
+  useDocumentTitle('Page Not Found')
   const navigate = useNavigate()
 
   return (

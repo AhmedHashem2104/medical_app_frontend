@@ -6,11 +6,13 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useUser } from '@/hooks/use-users'
 import { format } from 'date-fns'
+import { useDocumentTitle } from '@/hooks/use-document-title'
 
 export default function UserDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { data: user, isLoading } = useUser(id!)
+  useDocumentTitle(user?.profile ? `${user.profile.firstName} ${user.profile.lastName}` : 'User')
 
   return (
     <div className="space-y-6">

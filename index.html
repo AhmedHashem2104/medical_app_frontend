@@ -4,7 +4,41 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>medical_app_frontned</title>
+    <title>MedAdmin — Medical Administration Platform</title>
+    <meta name="description" content="MedAdmin is a unified clinical administration platform for managing patients, visits, organizations, billing, and scheduling." />
+    <meta name="application-name" content="MedAdmin" />
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MedAdmin — Medical Administration Platform" />
+    <meta property="og:description" content="Manage patients, visits, organizations, and billing from one unified clinical dashboard." />
+    <meta property="og:site_name" content="MedAdmin" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="MedAdmin" />
+    <meta name="twitter:description" content="Unified medical administration platform." />
+
+    <!-- Theme color -->
+    <meta name="theme-color" content="#0e1117" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f8f9fc" media="(prefers-color-scheme: light)" />
+
+    <!-- Apply dark class before React hydrates to prevent flash of unstyled content -->
+    <script>
+      (function () {
+        try {
+          var s = localStorage.getItem('ui-storage');
+          var theme = s ? JSON.parse(s).state?.theme : null;
+          var isDark = theme === 'dark' ||
+            ((!theme || theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) document.documentElement.classList.add('dark');
+        } catch (_) {
+          if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+            document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

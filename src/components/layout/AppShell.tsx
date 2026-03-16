@@ -12,13 +12,15 @@ export function AppShell() {
       <Sidebar />
       <div
         className={cn(
-          'flex flex-1 flex-col overflow-hidden transition-all duration-300',
-          sidebarOpen ? 'ml-64' : 'ml-16'
+          'content-transition flex flex-1 flex-col overflow-hidden min-w-0',
+          sidebarOpen ? 'ml-60' : 'ml-[60px]'
         )}
       >
         <TopBar />
-        <main className="flex-1 overflow-y-auto p-6">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto">
+          <div className="page-enter p-5 lg:p-6">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

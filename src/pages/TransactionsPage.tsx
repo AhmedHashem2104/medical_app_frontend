@@ -6,13 +6,14 @@ import { DataTable } from '@/components/common/DataTable'
 import { Badge } from '@/components/ui/badge'
 import { useTransactions } from '@/hooks/use-transactions'
 import type { Transaction, PaymentStatus } from '@/types/transaction'
+import { useDocumentTitle } from '@/hooks/use-document-title'
 import { cn } from '@/lib/utils'
 
 const STATUS_STYLES: Record<PaymentStatus, string> = {
-  pending: 'bg-yellow-50 text-yellow-700',
-  completed: 'bg-green-50 text-green-700',
-  failed: 'bg-red-50 text-red-700',
-  refunded: 'bg-purple-50 text-purple-700',
+  pending: 'bg-amber-500/10 text-amber-700 dark:text-amber-300',
+  completed: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+  failed: 'bg-red-500/10 text-red-700 dark:text-red-300',
+  refunded: 'bg-purple-500/10 text-purple-700 dark:text-purple-300',
 }
 
 const columns: ColumnDef<Transaction>[] = [
@@ -57,6 +58,7 @@ const columns: ColumnDef<Transaction>[] = [
 ]
 
 export default function TransactionsPage() {
+  useDocumentTitle('Transactions')
   const [page, setPage] = useState(1)
   const [, startTransition] = useTransition()
 

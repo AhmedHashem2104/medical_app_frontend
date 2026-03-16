@@ -35,6 +35,11 @@ export const queryKeys = {
     list: (params: ListParams) => ['notifications', 'list', params] as const,
     unread: () => ['notifications', 'unread'] as const,
   },
+  categories: {
+    all: ['categories'] as const,
+    list: (params: ListParams) => ['categories', 'list', params] as const,
+    detail: (id: string) => ['categories', id] as const,
+  },
   dashboard: {
     stats: () => ['dashboard', 'stats'] as const,
     appointments: (period: string) => ['dashboard', 'appointments', period] as const,

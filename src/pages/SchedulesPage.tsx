@@ -8,10 +8,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useSchedules } from '@/hooks/use-schedules'
 import type { Schedule } from '@/types/schedule'
+import { useDocumentTitle } from '@/hooks/use-document-title'
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 export default function SchedulesPage() {
+  useDocumentTitle('Schedules')
   const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const [, startTransition] = useTransition()

@@ -9,8 +9,10 @@ import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/common/EmptyState'
 import { useOrganizations } from '@/hooks/use-organizations'
+import { useDocumentTitle } from '@/hooks/use-document-title'
 
 export default function OrganizationsPage() {
+  useDocumentTitle('Organizations')
   const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')

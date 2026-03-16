@@ -2,14 +2,12 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
-  getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
 import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import { useState } from 'react'
-import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -40,7 +38,7 @@ export function DataTable<TData>({
   pageSize = 20,
   onPageChange,
   onSearchChange,
-  searchPlaceholder = 'Search...',
+  searchPlaceholder = 'Search…',
   isLoading,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -50,46 +48,58 @@ export function DataTable<TData>({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     state: { sorting },
-    manualPagination: !!onPageChange,
+    manualPagination: true,
     pageCount: totalCount ? Math.ceil(totalCount / pageSize) : undefined,
   })
 
   const totalPages = totalCount ? Math.ceil(totalCount / pageSize) : 1
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
+      {/* Toolbar */}
       {onSearchChange && (
-        <Input
-          placeholder={searchPlaceholder}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className="max-w-sm"
-        />
+        <div className="relative max-w-xs">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder={searchPlaceholder}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className={cn(
+              'flex h-9 w-full rounded-lg border border-input bg-background pl-9 pr-3 text-sm',
+              'placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50',
+              'transition-shadow'
+            )}
+          />
+        </div>
       )}
 
-      <div className="rounded-md border border-border">
+      {/* Table */}
+      <div className="rounded-xl border border-border overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="bg-muted/40 hover:bg-muted/40">
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className={cn(header.column.getCanSort() && 'cursor-pointer select-none')}
+                    className={cn(
+                      'text-xs font-semibold text-muted-foreground py-2.5',
+                      header.column.getCanSort() && 'cursor-pointer select-none hover:text-foreground'
+                    )}
                     onClick={header.column.getToggleSortingHandler()}
                   >
                     <div className="flex items-center gap-1">
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {header.column.getCanSort() && (
-                        <span className="text-muted-foreground">
+                        <span className="text-muted-foreground/60">
                           {header.column.getIsSorted() === 'asc' ? (
-                            <ChevronUp size={14} />
+                            <ChevronUp size={13} />
                           ) : header.column.getIsSorted() === 'desc' ? (
-                            <ChevronDown size={14} />
+                            <ChevronDown size={13} />
                           ) : (
-                            <ChevronsUpDown size={14} />
+                            <ChevronsUpDown size={13} />
                           )}
                         </span>
                       )}
@@ -101,26 +111,26 @@ export function DataTable<TData>({
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
+              Array.from({ length: 7 }).map((_, i) => (
+                <TableRow key={i} className="border-b border-border/60">
                   {columns.map((_, j) => (
-                    <TableCell key={j}>
-                      <div className="h-4 w-full animate-pulse rounded bg-muted" />
+                    <TableCell key={j} className="py-3">
+                      <div className="skeleton-shimmer h-4 w-full rounded-md" />
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : table.getRowModel().rows.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={columns.length} className="h-32 text-center text-sm text-muted-foreground">
                   No results found.
                 </TableCell>
               </TableRow>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="hover:bg-muted/50">
+                <TableRow key={row.id} className="border-b border-border/60 hover:bg-muted/30 transition-colors">
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="py-3 text-sm">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -131,16 +141,20 @@ export function DataTable<TData>({
         </Table>
       </div>
 
+      {/* Pagination */}
       {onPageChange && (
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">
-            Page {page} of {totalPages}
-            {totalCount !== undefined && ` · ${totalCount} total`}
+        <div className="flex items-center justify-between pt-0.5">
+          <span className="text-xs text-muted-foreground">
+            Page <span className="font-medium text-foreground">{page}</span> of <span className="font-medium text-foreground">{totalPages}</span>
+            {totalCount !== undefined && (
+              <span className="text-muted-foreground/70"> · {totalCount.toLocaleString()} records</span>
+            )}
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <Button
               variant="outline"
               size="sm"
+              className="h-8 w-8 p-0"
               onClick={() => onPageChange(page - 1)}
               disabled={page <= 1}
             >
@@ -149,6 +163,7 @@ export function DataTable<TData>({
             <Button
               variant="outline"
               size="sm"
+              className="h-8 w-8 p-0"
               onClick={() => onPageChange(page + 1)}
               disabled={page >= totalPages}
             >

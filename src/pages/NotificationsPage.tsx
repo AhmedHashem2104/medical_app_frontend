@@ -9,8 +9,10 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/common/EmptyState'
 import { useNotifications, useMarkAllNotificationsRead, useMarkNotificationRead } from '@/hooks/use-notifications'
 import { cn } from '@/lib/utils'
+import { useDocumentTitle } from '@/hooks/use-document-title'
 
 export default function NotificationsPage() {
+  useDocumentTitle('Notifications')
   const [page, setPage] = useState(1)
   const [, startTransition] = useTransition()
 

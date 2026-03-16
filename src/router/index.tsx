@@ -18,6 +18,8 @@ const VisitsPage = lazy(() => import('@/pages/VisitsPage'))
 const TransactionsPage = lazy(() => import('@/pages/TransactionsPage'))
 const NotificationsPage = lazy(() => import('@/pages/NotificationsPage'))
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'))
+const CategoriesPage = lazy(() => import('@/pages/CategoriesPage'))
+const SettingsPage = lazy(() => import('@/pages/SettingsPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 const withSuspense = (element: React.ReactNode) => (
@@ -47,10 +49,12 @@ export const router = createBrowserRouter([
           { path: 'organizations/:id', element: withSuspense(<OrganizationDetailPage />) },
           { path: 'schedules', element: withSuspense(<SchedulesPage />) },
           { path: 'schedules/:id', element: withSuspense(<ScheduleDetailPage />) },
+          { path: 'categories', element: withSuspense(<CategoriesPage />) },
           { path: 'visits', element: withSuspense(<VisitsPage />) },
           { path: 'transactions', element: withSuspense(<TransactionsPage />) },
           { path: 'notifications', element: withSuspense(<NotificationsPage />) },
           { path: 'profile', element: withSuspense(<ProfilePage />) },
+          { path: 'settings', element: withSuspense(<SettingsPage />) },
         ],
       },
     ],

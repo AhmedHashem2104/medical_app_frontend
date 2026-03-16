@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { toast } from 'sonner'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -8,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuthStore } from '@/store/auth-store'
 import { Badge } from '@/components/ui/badge'
+import { useDocumentTitle } from '@/hooks/use-document-title'
 
 const profileSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
@@ -18,6 +20,7 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>
 
 export default function ProfilePage() {
+  useDocumentTitle('Profile')
   const { userId, role } = useAuthStore()
 
   const {
@@ -28,9 +31,8 @@ export default function ProfilePage() {
     resolver: zodResolver(profileSchema),
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onSubmit = (_data: ProfileFormData) => {
-    // TODO: wire to profile update mutation when profile API is available
+    toast.info('Profile update is not yet available.')
   }
 
   return (

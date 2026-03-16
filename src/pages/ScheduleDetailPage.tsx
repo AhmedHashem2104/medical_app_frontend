@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSchedule } from '@/hooks/use-schedules'
+import { useDocumentTitle } from '@/hooks/use-document-title'
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
@@ -12,6 +13,7 @@ export default function ScheduleDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { data: schedule, isLoading } = useSchedule(id!)
+  useDocumentTitle(schedule ? 'Schedule Detail' : 'Schedule')
 
   return (
     <div className="space-y-6">

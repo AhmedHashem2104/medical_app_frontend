@@ -6,14 +6,15 @@ import { DataTable } from '@/components/common/DataTable'
 import { Badge } from '@/components/ui/badge'
 import { useVisits } from '@/hooks/use-visits'
 import type { Visit, VisitStatus } from '@/types/visit'
+import { useDocumentTitle } from '@/hooks/use-document-title'
 import { cn } from '@/lib/utils'
 
 const STATUS_STYLES: Record<VisitStatus, string> = {
-  scheduled: 'bg-blue-50 text-blue-700',
-  in_progress: 'bg-yellow-50 text-yellow-700',
-  completed: 'bg-green-50 text-green-700',
-  cancelled: 'bg-gray-50 text-gray-700',
-  no_show: 'bg-red-50 text-red-700',
+  scheduled: 'bg-sky-500/10 text-sky-700 dark:text-sky-300',
+  in_progress: 'bg-amber-500/10 text-amber-700 dark:text-amber-300',
+  completed: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+  cancelled: 'bg-slate-500/10 text-slate-600 dark:text-slate-400',
+  no_show: 'bg-red-500/10 text-red-700 dark:text-red-300',
 }
 
 const columns: ColumnDef<Visit>[] = [
@@ -49,6 +50,7 @@ const columns: ColumnDef<Visit>[] = [
 ]
 
 export default function VisitsPage() {
+  useDocumentTitle('Visits')
   const [page, setPage] = useState(1)
   const [, startTransition] = useTransition()
 
